@@ -1,51 +1,59 @@
 <%- include('./includes/header') %>
 
-<div class="container py-md-5 container--narrow">
-  <%- include("./includes/flash") %>
+  <div class="container py-md-5 container--narrow">
+    <%- include("./includes/flash") %>
 
-  <div class="d-flex justify-content-between">
-    <h2><%= post.title %></h2>
-    <% if(post.isVisitorOwner) { %>
-    <span class="pt-2">
-      <a
-        href="/post/<%= post._id %>/edit"
-        class="text-primary mr-2"
-        data-toggle="tooltip"
-        data-placement="top"
-        title="Edit"
-        ><i class="fas fa-edit"></i
-      ></a>
-      <form
-        class="delete-post-form d-inline"
-        action="/post/<%= post._id %>/delete"
-        method="POST"
-      >
-        <button
-          class="delete-post-button text-danger"
-          data-toggle="tooltip"
-          data-placement="top"
-          title="Delete"
-        >
-          <i class="fas fa-trash"></i>
-        </button>
-      </form>
-    </span>
-    <% } %>
+      <div class="d-flex justify-content-between">
+        <h2>
+          <%= post.title %>
+        </h2>
+        <% if(post.isVisitorOwner) { %>
+          <span class="pt-2">
+            <a href="/post/<%= post._id %>/edit" class="text-primary mr-2" data-toggle="tooltip" data-placement="top"
+              title="Edit"><i class="fas fa-edit"></i></a>
+            <form class="delete-post-form d-inline" action="/post/<%= post._id %>/delete" method="POST">
+              <button class="delete-post-button text-danger" data-toggle="tooltip" data-placement="top" title="Delete">
+                <i class="fas fa-trash"></i>
+              </button>
+            </form>
+          </span>
+          <% } %>
+      </div>
+
+      <p class="text-muted small mb-4">
+        <a href="/profile/<%= post.author.username %>"><img class="avatar-tiny" src="<%= post.author.avatar %>" /></a>
+        Posted by
+        <a href="/profile/<%= post.author.username %>">
+          <%= post.author.username %>
+        </a>
+        on <%= post.createdDate.getMonth() + 1 %> / <%= post.createdDate.getDate() %> / <%=
+              post.createdDate.getFullYear() %>
+      </p>
+
+      <div class="body-content"><%- filterUserHTML(post.body) %></div>
+
+      <hr />
+      <div id="comments">
+        <h5>Comments</h5>
+        <% if (post.comments && post.comments.length) { %>
+          <% post.comments.forEach(function(comment) { %>
+            <div class="card mb-2">
+              <div class="card-body">
+                <p class="mb-1"><img src="<%= comment.author.avatar %>"
+                    style="width:24px;height:24px;border-radius:12px;margin-right:8px;" /> <strong>
+                    <%= comment.author.username %>
+                  </strong></p>
+                <p class="mb-0"><%- comment.body %></p>
+                <small class="text-muted">
+                  <%= comment.createdDate.toLocaleString() %>
+                </small>
+              </div>
+            </div>
+            <% }) %>
+              <% } else { %>
+                <p class="text-muted">No comments yet.</p>
+                <% } %>
+      </div>
   </div>
 
-  <p class="text-muted small mb-4">
-    <a href="/profile/<%= post.author.username %>"
-      ><img class="avatar-tiny" src="<%= post.author.avatar %>"
-    /></a>
-    Posted by
-    <a href="/profile/<%= post.author.username %>"
-      ><%= post.author.username %></a
-    >
-    on <%= post.createdDate.getMonth() + 1 %> / <%= post.createdDate.getDate()
-    %> / <%= post.createdDate.getFullYear() %>
-  </p>
-
-  <div class="body-content"><%- filterUserHTML(post.body) %></div>
-</div>
-
-<%- include("./includes/footer") %>
+  <%- include("./includes/footer") %>
